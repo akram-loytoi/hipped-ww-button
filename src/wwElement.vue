@@ -6,7 +6,7 @@
         :type="buttonType"
         :style="buttonStyle"
         :data-ww-flag="'btn-' + content.buttonType"
-        :disabled="content.disabled"
+        :disabled="content.disabled || content.isLoading || isSuccess"
         v-bind="properties"
         @focus="isReallyFocused = true"
         @blur="onBlur($event)"
@@ -23,9 +23,11 @@
         @keydown="onKeyDown"
         @keyup="onKeyUp"
     >
-        <wwElement v-if="content.hasLeftIcon && content.leftIcon" v-bind="content.leftIcon"></wwElement>
-        <wwText tag="span" :text="text"></wwText>
-        <wwElement v-if="content.hasRightIcon && content.rightIcon" v-bind="content.rightIcon"></wwElement>
+        <span v-if="content.isLoading" class="ww-button__spinner"></span>
+        <span v-else-if="isSuccess" class="ww-button__checkmark">✓</span>
+        <wwElement v-if="content.hasLeftIcon && content.leftIcon && !content.isLoading && !isSuccess" v-bind="content.leftIcon"></wwElement>
+        <wwText tag="span" :text="displayText"></wwText>
+        <wwElement v-if="content.hasRightIcon && content.rightIcon && !content.isLoading && !isSuccess" v-bind="content.rightIcon"></wwElement>
     </component>
 </template>
 
@@ -80,6 +82,7 @@ export default {
         return {
             isReallyFocused: false,
             isReallyActive: false,
+            isSuccess: false,
         };
     },
     computed: {
@@ -120,6 +123,11 @@ export default {
         },
         text() {
             return this.wwElementState.props.text;
+        },
+        displayText() {
+            if (this.isSuccess) return this.content.successLabel || 'Done!';
+            if (this.content.isLoading) return this.content.loadingLabel || 'Loading...';
+            return this.text;
         },
         isFocused() {
             /* wwEditor:start */
@@ -163,6 +171,21 @@ export default {
             },
         },
         /* wwEditor:end */
+        'content.isLoading': {
+            handler(isLoading, wasLoading) {
+                if (wasLoading && !isLoading) {
+                    this.isSuccess = true;
+                    setTimeout(() => {
+                        this.isSuccess = false;
+                        this.$emit('remove-state', 'loading');
+                    }, 1500);
+                } else if (isLoading) {
+                    this.$emit('add-state', 'loading');
+                } else {
+                    this.$emit('remove-state', 'loading');
+                }
+            },
+        },
         'content.disabled': {
             immediate: true,
             handler(value) {
@@ -264,6 +287,7 @@ export default {
 .ww-button {
     justify-content: center;
     align-items: center;
+    gap: 8px;
     &.button {
         outline: none;
         border: none;
@@ -274,5 +298,23 @@ export default {
     &.-link {
         cursor: pointer;
     }
+    &__spinner {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: ww-button-spin 0.7s linear infinite;
+        flex-shrink: 0;
+    }
+    &__checkmark {
+        font-size: 14px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+}
+@keyframes ww-button-spin {
+    to { transform: rotate(360deg); }
 }
 </style>

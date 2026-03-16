@@ -55,7 +55,7 @@ export default {
             };
         },
     },
-    states: ['focus', 'disabled', 'active'],
+    states: ['focus', 'disabled', 'active', 'loading'],
     triggerEvents: [
         { name: 'focus', label: { en: 'On focus' }, event: null },
         { name: 'blur', label: { en: 'On blur' }, event: null },
@@ -115,6 +115,45 @@ export default {
             bindingValidation: {
                 type: 'boolean',
                 tooltip: 'A boolean that defines if the button is disabled: `true | false`',
+            },
+            /* wwEditor:end */
+        },
+        isLoading: {
+            label: { en: 'Loading' },
+            type: 'OnOff',
+            section: 'settings',
+            defaultValue: false,
+            bindable: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'boolean',
+                tooltip: 'A boolean that controls the loading state: true | false',
+            },
+            /* wwEditor:end */
+        },
+        loadingLabel: {
+            label: { en: 'Loading label' },
+            type: 'Text',
+            section: 'settings',
+            defaultValue: 'Loading...',
+            bindable: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'string',
+                tooltip: 'A string shown as the button label during loading',
+            },
+            /* wwEditor:end */
+        },
+        successLabel: {
+            label: { en: 'Success label' },
+            type: 'Text',
+            section: 'settings',
+            defaultValue: 'Done!',
+            bindable: true,
+            /* wwEditor:start */
+            bindingValidation: {
+                type: 'string',
+                tooltip: 'A string shown briefly after loading completes',
             },
             /* wwEditor:end */
         },
