@@ -157,6 +157,26 @@ export default {
             },
             /* wwEditor:end */
         },
+        hasLoadingIcon: {
+            label: { en: 'Custom loading icon' },
+            type: 'OnOff',
+            section: 'settings',
+            defaultValue: false,
+        },
+        loadingIcon: {
+            hidden: true,
+            isArray: false,
+        },
+        hasSuccessIcon: {
+            label: { en: 'Custom success icon' },
+            type: 'OnOff',
+            section: 'settings',
+            defaultValue: false,
+        },
+        successIcon: {
+            hidden: true,
+            isArray: false,
+        },
         hasLeftIcon: {
             label: { en: 'Left icon', fr: 'Icône gauche' },
             section: 'settings',

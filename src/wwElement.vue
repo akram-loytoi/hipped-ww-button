@@ -23,8 +23,20 @@
         @keydown="onKeyDown"
         @keyup="onKeyUp"
     >
-        <span v-if="content.isLoading" class="ww-button__spinner"></span>
-        <span v-else-if="isSuccess" class="ww-button__checkmark">✓</span>
+        <template v-if="content.isLoading">
+            <wwElement
+                v-if="content.hasLoadingIcon && content.loadingIcon"
+                v-bind="content.loadingIcon">
+            </wwElement>
+            <span v-else class="ww-button__spinner"></span>
+        </template>
+        <template v-else-if="isSuccess">
+            <wwElement
+                v-if="content.hasSuccessIcon && content.successIcon"
+                v-bind="content.successIcon">
+            </wwElement>
+            <span v-else class="ww-button__checkmark">✓</span>
+        </template>
         <wwElement v-if="content.hasLeftIcon && content.leftIcon && !content.isLoading && !isSuccess" v-bind="content.leftIcon"></wwElement>
         <wwText tag="span" :text="displayText"></wwText>
         <wwElement v-if="content.hasRightIcon && content.rightIcon && !content.isLoading && !isSuccess" v-bind="content.rightIcon"></wwElement>
@@ -148,6 +160,26 @@ export default {
     },
     watch: {
         /* wwEditor:start */
+        'content.hasLoadingIcon': {
+            async handler(hasLoadingIcon) {
+                if (this.wwEditorState.isACopy) return;
+                if (hasLoadingIcon && !this.content.loadingIcon) {
+                    // 'aa27b26f-0686-4c29-98c5-8217044045b7' is the stable base component ID for ww-loader
+                    // in the Hipped WeWeb workspace. Update this UUID if the workspace changes.
+                    const content = await this.createElement('aa27b26f-0686-4c29-98c5-8217044045b7');
+                    this.$emit('update:content:effect', { loadingIcon: content });
+                }
+            },
+        },
+        'content.hasSuccessIcon': {
+            async handler(hasSuccessIcon) {
+                if (this.wwEditorState.isACopy) return;
+                if (hasSuccessIcon && !this.content.successIcon) {
+                    const content = await this.createElement('ww-icon');
+                    this.$emit('update:content:effect', { successIcon: content });
+                }
+            },
+        },
         'content.hasRightIcon': {
             async handler(hasRightIcon) {
                 if (this.wwEditorState.isACopy) {
