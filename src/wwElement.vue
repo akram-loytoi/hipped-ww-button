@@ -4,7 +4,6 @@
         class="ww-button"
         :class="{ button: tag, '-link': hasLink && !isEditing, active: isActive }"
         :type="buttonType"
-        :style="buttonStyle"
         :data-ww-flag="'btn-' + content.buttonType"
         :disabled="content.disabled || content.isLoading || isSuccess"
         v-bind="properties"
@@ -45,12 +44,6 @@
 
 <script>
 import { computed } from 'vue';
-const TEXT_ALIGN_TO_JUSTIFY = {
-    center: 'center',
-    right: 'flex-end',
-    left: 'flex-start',
-    justify: 'center',
-};
 export default {
     props: {
         content: { type: Object, required: true },
@@ -98,11 +91,6 @@ export default {
         };
     },
     computed: {
-        buttonStyle() {
-            return {
-                justifyContent: TEXT_ALIGN_TO_JUSTIFY[this.content['_ww-text_textAlign']] || 'center',
-            };
-        },
         isEditing() {
             /* wwEditor:start */
             return this.wwEditorState.editMode === wwLib.wwEditorHelper.EDIT_MODES.EDITION;
@@ -140,14 +128,6 @@ export default {
             if (this.isSuccess) return this.content.successLabel || 'Done!';
             if (this.content.isLoading) return this.content.loadingLabel || 'Loading...';
             return this.text;
-        },
-        isFocused() {
-            /* wwEditor:start */
-            if (this.wwEditorState.isSelected) {
-                return this.wwElementState.states.includes('focus');
-            }
-            /* wwEditor:end */
-            return this.isReallyFocused;
         },
         isActive() {
             /* wwEditor:start */
@@ -234,16 +214,6 @@ export default {
             } else if (!isFocused && wasFocused) {
                 this.$emit('trigger-event', { name: 'blur' });
             }
-        },
-        isFocused: {
-            immediate: true,
-            handler(value) {
-                if (value) {
-                    this.$emit('add-state', 'focus');
-                } else {
-                    this.$emit('remove-state', 'focus');
-                }
-            },
         },
         isActive: {
             immediate: true,
