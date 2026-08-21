@@ -4,6 +4,13 @@ const INFO = {
     button: 'btn',
 };
 
+const TEXT_ALIGN_TO_JUSTIFY = {
+    center: 'center',
+    right: 'flex-end',
+    left: 'flex-start',
+    justify: 'center',
+};
+
 export default {
     inherit: 'ww-text',
     options: {
@@ -55,7 +62,11 @@ export default {
             };
         },
     },
-    states: ['focus', 'disabled', 'active', 'loading'],
+    css: ({ content }) => {
+        const justifyContent = TEXT_ALIGN_TO_JUSTIFY[content['_ww-text_textAlign']] || 'center';
+        return [{ property: 'justify-content', value: justifyContent }];
+    },
+    states: [{ label: 'focus', selector: '&:focus-within' }, 'disabled', 'active', 'loading'],
     triggerEvents: [
         { name: 'focus', label: { en: 'On focus' }, event: null },
         { name: 'blur', label: { en: 'On blur' }, event: null },
